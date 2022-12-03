@@ -1,8 +1,10 @@
 const readline = require("readline-sync");
+const WINNING_SCORE = 3;
 
 function createPlayer() {
   return {
     move: null,
+    score: 0,
   };
 }
 
@@ -23,6 +25,7 @@ function createHuman() {
   let playerObject = createPlayer();
   let humanObject = {
     choose() {
+      readline.question("Press enter to continue...");
       const MOVES = ['rock', 'paper', 'scissors'];
       let choice;
 
@@ -46,6 +49,7 @@ const RPSGame = {
   computer: createComputer(),
 
   displayWelcomeMessage() {
+    console.clear();
     console.log("Welcome to Rock, Paper, Scissors!");
   },
 
@@ -54,38 +58,64 @@ const RPSGame = {
   },
 
   displayWinner() {
+    console.clear();
     let humanMove = this.human.move;
     let computerMove = this.computer.move;
 
-    console.log(`You chose: ${this.human.move}`);
-    console.log(`Computer chose: ${this.computer.move}`);
+    console.log(`Your move: ${humanMove} | Computer move: ${computerMove}`);
 
+    //human win conditions
     if ((humanMove === 'rock' && computerMove === 'scissors') ||
         (humanMove === 'paper' && computerMove === 'rock') ||
         (humanMove === 'scissors' && computerMove === 'paper')) {
-      console.log('You win!');
+      console.log('You win the round!');
+      this.human.score += 1;
+    //computer win conditions
     } else if ((humanMove === 'rock' && computerMove === 'paper') ||
                (humanMove === 'paper' && computerMove === 'scissors') ||
                (humanMove === 'scissors' && computerMove === 'rock')) {
-      console.log("Computer wins!");
+      console.log("Computer wins the round!");
+      this.computer.score += 1;
+    //tie condition
     } else {
       console.log("It's a tie");
     }
+
+    console.log(`Current Score:\nPlayer: ${this.human.score} | Computer: ${this.computer.score}`);
   },
 
   playAgain() {
+    let winner = this.human.score > this.computer.score ? 'Player' : 'Computer';
+    console.log(`The winner of the Match is ${winner}!`);
+    console.log("------------");
     console.log("Would you like to play again? (y/n)");
     let answer = readline.question();
     return answer.toLowerCase()[0] === 'y';
   },
 
+  checkWinner() {
+    return [this.human.score, this.computer.score].includes(WINNING_SCORE);
+  },
+
+  resetScores() {
+    this.human.score = 0;
+    this.computer.score = 0;
+  },
+
   play() {
-    while (true) {
-      this.displayWelcomeMessage();
+    this.displayWelcomeMessage();
+
+    while (!this.checkWinner()) {
       this.human.choose();
       this.computer.choose();
       this.displayWinner();
-      if (!this.playAgain()) break;
+      if (this.checkWinner()) {
+        if (this.playAgain()) {
+          this.resetScores();
+        } else {
+          break;
+        }
+      }
     }
 
     this.displayGoodbyeMessage();
