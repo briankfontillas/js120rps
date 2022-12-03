@@ -1,39 +1,49 @@
 const readline = require("readline-sync");
 
-function createPlayer(playerType) {
+function createPlayer() {
   return {
-    playerType,
     move: null,
-
-    isHuman() {
-      return this.playerType === 'human';
-    },
-
-    choose() {
-      if (this.isHuman()) {
-        let choice;
-        const MOVES = ['rock', 'paper', 'scissors'];
-
-        while (true) {
-          console.log('Please choose rock, paper, or scissors');
-          choice = readline.question();
-          if (MOVES.includes(choice)) break;
-          console.log('Sorry, invalid choice.');
-        }
-
-        this.move = choice;
-      } else {
-        const choices = ['rock', 'paper', 'scissors'];
-        let randomIndex = Math.floor(Math.random() * choices.length);
-        this.move = choices[randomIndex];
-      }
-    },
   };
 }
 
+function createComputer() {
+  let playerObject = createPlayer();
+  let computerObject = {
+    choose() {
+      const choices = ['rock', 'paper', 'scissors'];
+      let randomIndex = Math.floor(Math.random() * choices.length);
+      this.move = choices[randomIndex];
+    },
+  };
+
+  return Object.assign(playerObject, computerObject);
+}
+
+function createHuman() {
+  let playerObject = createPlayer();
+  let humanObject = {
+    choose() {
+      const MOVES = ['rock', 'paper', 'scissors'];
+      let choice;
+
+      while (true) {
+        console.log('Please choose rock, paper, or scissors');
+        choice = readline.question();
+        if (MOVES.includes(choice)) break;
+        console.log('Sorry, invalid choice.');
+      }
+
+      this.move = choice;
+    }
+  };
+
+  return Object.assign(playerObject, humanObject);
+
+}
+
 const RPSGame = {
-  human: createPlayer('human'),
-  computer: createPlayer('computer'),
+  human: createHuman('human'),
+  computer: createComputer('computer'),
 
   displayWelcomeMessage() {
     console.log("Welcome to Rock, Paper, Scissors!");
@@ -62,9 +72,9 @@ const RPSGame = {
       this.displayWinner();
       if (!this.playAgain()) break;
     }
-    
+
     this.displayGoodbyeMessage();
-      
+
   },
 };
 
