@@ -42,8 +42,8 @@ function createHuman() {
 }
 
 const RPSGame = {
-  human: createHuman('human'),
-  computer: createComputer('computer'),
+  human: createHuman(),
+  computer: createComputer(),
 
   displayWelcomeMessage() {
     console.log("Welcome to Rock, Paper, Scissors!");
@@ -54,8 +54,23 @@ const RPSGame = {
   },
 
   displayWinner() {
+    let humanMove = this.human.move;
+    let computerMove = this.computer.move;
+
     console.log(`You chose: ${this.human.move}`);
     console.log(`Computer chose: ${this.computer.move}`);
+
+    if ((humanMove === 'rock' && computerMove === 'scissors') ||
+        (humanMove === 'paper' && computerMove === 'rock') ||
+        (humanMove === 'scissors' && computerMove === 'paper')) {
+      console.log('You win!');
+    } else if ((humanMove === 'rock' && computerMove === 'paper') ||
+               (humanMove === 'paper' && computerMove === 'scissors') ||
+               (humanMove === 'scissors' && computerMove === 'rock')) {
+      console.log("Computer wins!");
+    } else {
+      console.log("It's a tie");
+    }
   },
 
   playAgain() {
