@@ -2,7 +2,7 @@ const readline = require("readline-sync");
 
 function createPlayer(playerType) {
   return {
-    playerType: playerType,
+    playerType,
     move: null,
 
     isHuman() {
