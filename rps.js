@@ -40,13 +40,30 @@ function createHuman() {
       while (true) {
         console.log('Please choose rock, paper, scissors, lizard, or spock');
         choice = readline.question();
+        choice = this.convertMove(choice);
         if (CHOICES.includes(choice)) break;
         console.log('Sorry, invalid choice.');
       }
 
       this.move = choice;
       this.history.push(choice);
-    }
+    },
+    
+    //this function converts single letter moves to their perspective whole words
+    convertMove(move) {
+      if (move.toLowerCase() === 'sp') {
+        return 'spock';
+      } else {
+        switch (move.toLowerCase()) {
+          case 'r': return 'rock';
+          case 'p': return 'paper';
+          case 's': return 'scissors';
+          case 'l': return 'lizard';
+          default:
+            return move.toLowerCase();
+        }
+      }
+    },
   };
 
   return Object.assign(playerObject, humanObject);
@@ -97,7 +114,8 @@ const RPSGame = {
     console.log("------------");
     console.log("Would you like to play again? (y/n)");
     let answer = readline.question();
-    return answer.toLowerCase()[0] === 'y';
+    return answer.split("").every(letter => 'yes'.includes(letter.toLowerCase())) &&
+           answer.length > 0;
   },
 
   checkWinner() {
@@ -105,6 +123,7 @@ const RPSGame = {
   },
 
   resetScores() {
+    console.clear();
     this.human.score = 0;
     this.computer.score = 0;
   },
