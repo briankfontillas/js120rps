@@ -62,3 +62,16 @@ As long as the user doesn't quit, keep track of a history of moves by both the h
 ## Problem
 
 Come up with some rules based on the history of moves to help the computer make its moves. For instance, if the human tends to win over 60% of his hands when the computer chooses "rock," then decrease the likelihood that the computer will choose "rock." First, come up with an appropriate rule, then implement some history analysis. Use the analysis to adjust the weight of each choice -- for instance, increase the weight to increase the likelihood of choosing a particular move. Currently, the computer has a 33% chance of making any given move -- it's those odds that you need to weight. Finally, have the computer consider the weight of each choice when choosing a move.
+
+For the computer, we would first start off with an array of all their available choices: [r, p, s, l, sp]
+
+currently, they would choos from that^^ list with a random index. My goal is to add new lists that do NOT include losing items each time
+
+for example:
+If i lose to rock the first round, for the computers next choice, before choosing i will concat a new array to the original which will not include losing choices to rock. So the next choice will come from a random index from this array: [r, p, s, l, sp, r, p, sp]. Now, computers chances of each move look like this:
+rock = 25%
+paper = 25%
+scissors = 12.5%
+lizard = 12.5%
+spock = 25%
+

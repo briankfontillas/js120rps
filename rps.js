@@ -20,10 +20,25 @@ function createPlayer() {
 function createComputer() {
   let playerObject = createPlayer();
   let computerObject = {
+
+    currentChoices: CHOICES,
+    lastLoss: null,
+
     choose() {
-      let randomIndex = Math.floor(Math.random() * CHOICES.length);
-      this.move = CHOICES[randomIndex];
+      let randomIndex = Math.floor(Math.random() * this.currentChoices.length);
+      this.move = this.currentChoices[randomIndex];
       this.history.push(this.move);
+    },
+
+    //modify the weight against each move after an opponent loss
+    modifyChoices() {
+      let finalChoices = [];
+
+      CHOICES.forEach(move => {
+        if (!this.lastLoss.includes(move)) finalChoices.push(move);
+      });
+
+      return this.currentChoices.concat(finalChoices);
     },
   };
 
@@ -39,8 +54,7 @@ function createHuman() {
 
       while (true) {
         console.log('Please choose rock, paper, scissors, lizard, or spock');
-        choice = readline.question();
-        choice = this.convertMove(choice);
+        choice = this.convertMove(readline.question());
         if (CHOICES.includes(choice)) break;
         console.log('Sorry, invalid choice.');
       }
@@ -48,8 +62,8 @@ function createHuman() {
       this.move = choice;
       this.history.push(choice);
     },
-    
-    //this function converts single letter moves to their perspective whole words
+
+    //converts single letter moves to their perspective whole words
     convertMove(move) {
       if (move.toLowerCase() === 'sp') {
         return 'spock';
@@ -95,6 +109,10 @@ const RPSGame = {
     if (WINNING_MOVES[humanMove].includes(computerMove)) {
       console.log('You win the round!');
       this.human.score += 1;
+      this.computer.lastLoss = WINNING_MOVES[humanMove];
+      if (this.computer.lastLoss !== null) {
+        this.computer.currentChoices = this.computer.modifyChoices();
+      }
     //computer win conditions
     } else if (!WINNING_MOVES[humanMove].includes(computerMove) &&
                humanMove !== computerMove) {
