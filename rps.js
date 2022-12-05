@@ -7,7 +7,7 @@ const WINNING_MOVES = {
   lizard: ['spock', 'paper'],
   spock: ['rock', 'scissors']
 };
-const CHOICES = Object.keys(WINNING_MOVES);
+const CHOICES_LIST = Object.keys(WINNING_MOVES);
 
 function createPlayer() {
   return {
@@ -21,24 +21,24 @@ function createComputer() {
   let playerObject = createPlayer();
   let computerObject = {
 
-    currentChoices: CHOICES,
-    lastLoss: null,
+    choices: CHOICES_LIST,
+    loss: null,
 
     choose() {
-      let randomIndex = Math.floor(Math.random() * this.currentChoices.length);
-      this.move = this.currentChoices[randomIndex];
+      let randomIndex = Math.floor(Math.random() * this.choices.length);
+      this.move = this.choices[randomIndex];
       this.history.push(this.move);
     },
 
     //modify the weight against each move after an opponent loss
-    modifyChoices() {
+    modChoice() {
       let finalChoices = [];
 
-      CHOICES.forEach(move => {
-        if (!this.lastLoss.includes(move)) finalChoices.push(move);
+      CHOICES_LIST.forEach(move => {
+        if (!this.loss.includes(move)) finalChoices.push(move);
       });
 
-      return this.currentChoices.concat(finalChoices);
+      return this.choices.concat(finalChoices);
     },
   };
 
@@ -55,7 +55,7 @@ function createHuman() {
       while (true) {
         console.log('Please choose rock, paper, scissors, lizard, or spock');
         choice = this.convertMove(readline.question());
-        if (CHOICES.includes(choice)) break;
+        if (CHOICES_LIST.includes(choice)) break;
         console.log('Sorry, invalid choice.');
       }
 
@@ -86,7 +86,7 @@ function createHuman() {
 
 const RPSGame = {
   human: createHuman(),
-  computer: createComputer(),
+  cpu: createComputer(),
 
 
   displayWelcomeMessage() {
@@ -101,7 +101,7 @@ const RPSGame = {
   displayWinner() {
     console.clear();
     let humanMove = this.human.move;
-    let computerMove = this.computer.move;
+    let computerMove = this.cpu.move;
 
     console.log(`Your move: ${humanMove} | Computer move: ${computerMove}`);
 
@@ -109,25 +109,23 @@ const RPSGame = {
     if (WINNING_MOVES[humanMove].includes(computerMove)) {
       console.log('You win the round!');
       this.human.score += 1;
-      this.computer.lastLoss = WINNING_MOVES[humanMove];
-      if (this.computer.lastLoss !== null) {
-        this.computer.currentChoices = this.computer.modifyChoices();
-      }
-    //computer win conditions
+      this.cpu.loss = WINNING_MOVES[humanMove];
+      if (this.cpu.loss !== null) this.cpu.choices = this.cpu.modChoice();
+    //cpu win conditions
     } else if (!WINNING_MOVES[humanMove].includes(computerMove) &&
                humanMove !== computerMove) {
       console.log("Computer wins the round!");
-      this.computer.score += 1;
+      this.cpu.score += 1;
     //tie condition
     } else {
       console.log("It's a tie");
     }
 
-    console.log(`Current Score:\nPlayer: ${this.human.score} | Computer: ${this.computer.score}`);
+    console.log(`Current Score:\nPlayer: ${this.human.score} | Computer: ${this.cpu.score}`);
   },
 
   playAgain() {
-    let winner = this.human.score > this.computer.score ? 'Player' : 'Computer';
+    let winner = this.human.score > this.cpu.score ? 'Player' : 'Computer';
     console.log(`The winner of the Match is ${winner}!`);
     console.log("------------");
     console.log("Would you like to play again? (y/n)");
@@ -137,13 +135,13 @@ const RPSGame = {
   },
 
   checkWinner() {
-    return [this.human.score, this.computer.score].includes(WINNING_SCORE);
+    return [this.human.score, this.cpu.score].includes(WINNING_SCORE);
   },
 
   resetScores() {
     console.clear();
     this.human.score = 0;
-    this.computer.score = 0;
+    this.cpu.score = 0;
   },
 
   play() {
@@ -151,7 +149,7 @@ const RPSGame = {
 
     while (!this.checkWinner()) {
       this.human.choose();
-      this.computer.choose();
+      this.cpu.choose();
       this.displayWinner();
       if (this.checkWinner()) {
         if (this.playAgain()) {
