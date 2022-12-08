@@ -21,6 +21,7 @@ function createPlayer() {
 
     reset() {
       this.score = 0;
+      this.move = null;
     },
   };
 }
