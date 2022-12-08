@@ -14,6 +14,14 @@ function createPlayer() {
     move: null,
     history: [],
     score: 0,
+
+    addPoint() {
+      this.score += 1;
+    },
+
+    reset() {
+      this.score = 0;
+    },
   };
 }
 
@@ -39,6 +47,10 @@ function createComputer() {
       });
 
       return this.choices.concat(finalChoices);
+    },
+
+    lastLoss(humanMove) {
+      this.loss = WINNING_MOVES[humanMove];
     },
   };
 
@@ -108,14 +120,14 @@ const RPSGame = {
     //human win conditions
     if (WINNING_MOVES[humanMove].includes(computerMove)) {
       console.log('You win the round!');
-      this.human.score += 1;
-      this.cpu.loss = WINNING_MOVES[humanMove];
+      this.human.addPoint();
+      this.cpu.lastLoss(humanMove);
       if (this.cpu.loss !== null) this.cpu.choices = this.cpu.modChoice();
     //cpu win conditions
     } else if (!WINNING_MOVES[humanMove].includes(computerMove) &&
                humanMove !== computerMove) {
       console.log("Computer wins the round!");
-      this.cpu.score += 1;
+      this.cpu.addPoint();
     //tie condition
     } else {
       console.log("It's a tie");
@@ -164,8 +176,8 @@ const RPSGame = {
 
   resetScores() {
     console.clear();
-    this.human.score = 0;
-    this.cpu.score = 0;
+    this.human.reset();
+    this.cpu.reset();
   },
 
   play() {
