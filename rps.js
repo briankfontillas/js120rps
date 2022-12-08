@@ -124,14 +124,38 @@ const RPSGame = {
     console.log(`Current Score:\nPlayer: ${this.human.score} | Computer: ${this.cpu.score}`);
   },
 
+  playAgainResponses() {
+    const leadingSubstrings = str => {
+      let final = [];
+
+      for (let index = 1; index <= str.length; index += 1) {
+        let substring = str.slice(0, index);
+        final.push(substring);
+      }
+
+      return final;
+    };
+    const valid = ['yes', 'no'];
+
+    return valid.map(word => leadingSubstrings(word)).flat();
+  },
+
   playAgain() {
+    let answer;
     let winner = this.human.score > this.cpu.score ? 'Player' : 'Computer';
     console.log(`The winner of the Match is ${winner}!`);
     console.log("------------");
-    console.log("Would you like to play again? (y/n)");
-    let answer = readline.question();
-    return answer.split("").every(letter => 'yes'.includes(letter.toLowerCase())) &&
-           answer.length > 0;
+
+    while (true) {
+      console.log("Would you like to play again? (y/n)");
+      answer = readline.question("");
+
+      if (this.playAgainResponses().includes(answer)) {
+        return answer[0].toLowerCase() === 'y';
+      } else {
+        console.log(`${answer} is not a valid answer.`);
+      }
+    }
   },
 
   checkWinner() {
