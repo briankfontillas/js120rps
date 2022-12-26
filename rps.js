@@ -9,25 +9,38 @@ const WINNING_MOVES = {
 };
 const CHOICES_LIST = Object.keys(WINNING_MOVES);
 
-function createPlayer() {
-  return {
-    move: null,
-    history: [],
-    score: 0,
-
-    addPoint() {
-      this.score += 1;
-    },
-
-    reset() {
-      this.score = 0;
-      this.move = null;
-    },
-  };
+function Player() {
+  this.move = null;
+  this.history = [];
+  this.score = 0;
+  this.addPoint = function() {
+    this.score += 1;
+  }
+  this.reset = function() {
+    this.score = 0;
+    this.move = null;
+  }  
 }
 
+// function createPlayer() {
+//   return {
+//     move: null,
+//     history: [],
+//     score: 0,
+
+//     addPoint() {
+//       this.score += 1;
+//     },
+
+//     reset() {
+//       this.score = 0;
+//       this.move = null;
+//     },
+//   };
+// }
+
 function createComputer() {
-  let playerObject = createPlayer();
+  let playerObject = new Player();
   let computerObject = {
 
     choices: CHOICES_LIST,
@@ -59,7 +72,7 @@ function createComputer() {
 }
 
 function createHuman() {
-  let playerObject = createPlayer();
+  let playerObject = new Player();
   let humanObject = {
     choose() {
       readline.question("Press enter to continue...");
